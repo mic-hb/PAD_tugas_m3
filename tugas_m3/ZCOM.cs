@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace tugas_m3
 {
-    public partial class Form1 : Form
+    public partial class ZCOM : Form
     {
-        public Form1()
+        public ZCOM()
         {
             InitializeComponent();
         }
