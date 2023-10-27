@@ -62,6 +62,7 @@
             this.btnPause = new System.Windows.Forms.Button();
             this.gameTimer = new System.Windows.Forms.Timer(this.components);
             this.speedTimer = new System.Windows.Forms.Timer(this.components);
+            this.fireTimer = new System.Windows.Forms.Timer(this.components);
             this.panelMap.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -374,6 +375,11 @@
             // 
             this.speedTimer.Tick += new System.EventHandler(this.speedTimer_Tick);
             // 
+            // fireTimer
+            // 
+            this.fireTimer.Interval = 1000;
+            this.fireTimer.Tick += new System.EventHandler(this.fireTimer_Tick);
+            // 
             // ZCOM
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -435,6 +441,7 @@
         private System.Windows.Forms.Label boxKey;
         private System.Windows.Forms.Timer gameTimer;
         private System.Windows.Forms.Timer speedTimer;
+        private System.Windows.Forms.Timer fireTimer;
     }
 }
 

@@ -17,22 +17,26 @@ namespace tugas_m3
         private Player player;
         private int clock;
         private List<Label> list_barriers;
+        private List<Bullet> list_bullets;
         private const int inital_speed = 5;
         private int speed;
         private bool moveUp;
         private bool moveDown;
         private bool moveLeft;
         private bool moveRight;
+        private bool canFire;
 
         public ZCOM()
         {
             InitializeComponent();
             player = new Player();
             list_barriers = new List<Label>();
+            list_bullets = new List<Bullet>();
             moveUp = false;
             moveDown = false;
             moveLeft = false;
             moveRight = false;
+            canFire = true;
             speed = inital_speed;
         }
 
@@ -59,11 +63,15 @@ namespace tugas_m3
             player.X = 1;
             player.Y = 449;
             boxPlayer.Location = new Point(player.X, player.Y);
+            fireTimer.Interval = player.weapon.FireRate * 1000;
         }
 
         private void ZCOM_KeyDown(object sender, KeyEventArgs e)
         {
             speedTimer.Start();
+            int bullet_dimension = 5;
+            int bullet_x = player.X + boxPlayer.Size.Width / 2 - bullet_dimension;
+            int bullet_y = player.Y + boxPlayer.Size.Height / 2 - bullet_dimension;
 
             if (e.KeyCode == Keys.W)
             {
@@ -84,6 +92,103 @@ namespace tugas_m3
             {
                 moveRight = true;
             }
+
+            if (e.KeyCode == Keys.I)
+            {
+                if (canFire)
+                {
+                    canFire = false;
+                    fireTimer.Start();
+
+                    Label boxBullet = new Label();
+                    boxBullet.Name = "bullet";
+                    boxBullet.Size = new Size(bullet_dimension, bullet_dimension);
+                    boxBullet.AutoSize = false;
+                    boxBullet.Location = new Point(bullet_x, bullet_y);
+                    boxBullet.BackColor = Color.Red;
+                    boxBullet.BringToFront();
+                    panelMap.Controls.Add(boxBullet);
+
+                    Bullet bullet = new Bullet("bullet", bullet_x, bullet_y, 1, boxBullet);
+                    list_bullets.Add(bullet);
+                }
+
+            }
+
+            if (e.KeyCode == Keys.K)
+            {
+                if (canFire)
+                {
+                    canFire = false;
+                    fireTimer.Start();
+
+                    Label boxBullet = new Label();
+                    boxBullet.Name = "bullet";
+                    boxBullet.Size = new Size(bullet_dimension, bullet_dimension);
+                    boxBullet.AutoSize = false;
+                    boxBullet.Location = new Point(bullet_x, bullet_y);
+                    boxBullet.BackColor = Color.Red;
+                    boxBullet.BringToFront();
+                    panelMap.Controls.Add(boxBullet);
+
+                    Bullet bullet = new Bullet("bullet", bullet_x, bullet_y, 2, boxBullet);
+                    list_bullets.Add(bullet);
+                }
+            }
+
+            if (e.KeyCode == Keys.J)
+            {
+                if (canFire)
+                {
+                    canFire = false;
+                    fireTimer.Start();
+
+                    Label boxBullet = new Label();
+                    boxBullet.Name = "bullet";
+                    boxBullet.Size = new Size(bullet_dimension, bullet_dimension);
+                    boxBullet.AutoSize = false;
+                    boxBullet.Location = new Point(bullet_x, bullet_y);
+                    boxBullet.BackColor = Color.Red;
+                    boxBullet.BringToFront();
+                    panelMap.Controls.Add(boxBullet);
+
+                    Bullet bullet = new Bullet("bullet", bullet_x, bullet_y, 3, boxBullet);
+                    list_bullets.Add(bullet);
+                }
+            }
+
+            if (e.KeyCode == Keys.L)
+            {
+                //Bullet bullet = new Bullet("bullet", bullet_x, bullet_y, 4);
+                //list_bullets.Add(bullet);
+
+                //Label boxBullet = new Label();
+                //boxBullet.Name = bullet.ToString();
+                //boxBullet.Size = new Size(bullet_dimension, bullet_dimension);
+                //boxBullet.AutoSize = false;
+                //boxBullet.Location = new Point(bullet_x, bullet_y);
+                //boxBullet.BackColor = Color.Red;
+                //panelMap.Controls.Add(boxBullet);
+
+                if (canFire)
+                {
+                    canFire = false;
+                    fireTimer.Start();
+
+                    Label boxBullet = new Label();
+                    boxBullet.Name = "bullet";
+                    boxBullet.Size = new Size(bullet_dimension, bullet_dimension);
+                    boxBullet.AutoSize = false;
+                    boxBullet.Location = new Point(bullet_x, bullet_y);
+                    boxBullet.BackColor = Color.Red;
+                    boxBullet.BringToFront();
+                    panelMap.Controls.Add(boxBullet);
+
+                    Bullet bullet = new Bullet("bullet", bullet_x, bullet_y, 4, boxBullet);
+                    list_bullets.Add(bullet);
+                }
+            }
+
         }
 
         private void gameTimer_Tick(object sender, EventArgs e)
@@ -143,6 +248,37 @@ namespace tugas_m3
             if (borderRight) player.X = panelMap.Location.X + panelMap.Size.Width - boxPlayer.Size.Height;
 
             boxPlayer.Location = new Point(player.X, player.Y);
+
+            //foreach (Label boxBullet in panelMap.Controls.OfType<Label>())
+            //{
+            //    if (boxBullet.Name.Contains("bullet"))
+            //    {
+            //        panelMap.Controls.Remove(boxBullet);
+            //    }
+            //}
+
+            foreach (Bullet bullet in list_bullets)
+            {
+                bullet.Move();
+
+                foreach (Label boxBullet in panelMap.Controls)
+                {
+                    if (boxBullet == bullet.boxBullet)
+                    {
+                        boxBullet.Location = new Point(bullet.X, bullet.Y);
+                        boxBullet.BringToFront();
+                        break;
+                    }
+                }
+
+                if (bullet.X < 0 || bullet.X > panelMap.Location.X + panelMap.Size.Width || bullet.Y < 0 || bullet.Y > panelMap.Location.Y + panelMap.Size.Height)
+                {
+                    panelMap.Controls.Remove(bullet.boxBullet);
+                    list_bullets.Remove(bullet);
+                    break;
+                }
+            }
+
             timerRefresh();
             clock++;
         }
@@ -193,6 +329,12 @@ namespace tugas_m3
 
             speedTimer.Stop();
             speed = inital_speed;
+        }
+
+        private void fireTimer_Tick(object sender, EventArgs e)
+        {
+            canFire = true;
+            fireTimer.Stop();
         }
     }
 }
