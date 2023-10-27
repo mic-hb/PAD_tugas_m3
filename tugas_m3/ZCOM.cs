@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Media;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,12 +17,23 @@ namespace tugas_m3
         private Player player;
         private int clock;
         private List<Label> list_barriers;
+        private const int inital_speed = 5;
+        private int speed;
+        private bool moveUp;
+        private bool moveDown;
+        private bool moveLeft;
+        private bool moveRight;
 
         public ZCOM()
         {
             InitializeComponent();
             player = new Player();
             list_barriers = new List<Label>();
+            moveUp = false;
+            moveDown = false;
+            moveLeft = false;
+            moveRight = false;
+            speed = inital_speed;
         }
 
         private void gameInit()
@@ -51,27 +63,51 @@ namespace tugas_m3
 
         private void ZCOM_KeyDown(object sender, KeyEventArgs e)
         {
-            int speed = 10;
-            Point inital = new Point(player.X, player.Y);
+            speedTimer.Start();
 
             if (e.KeyCode == Keys.W)
             {
-                if (player.Y - speed > 0) player.Move(0, -speed);
+                moveUp = true;
             }
 
             if (e.KeyCode == Keys.S)
             {
-                if (player.Y + boxPlayer.Size.Height + speed < panelMap.Location.Y + panelMap.Size.Height) player.Move(0, speed);
+                moveDown = true;
             }
 
             if (e.KeyCode == Keys.A)
             {
-                if (player.X - speed > 0) player.Move(-speed, 0);
+                moveLeft = true;
             }
 
             if (e.KeyCode == Keys.D)
             {
-                if (player.X + boxPlayer.Size.Width + speed < panelMap.Location.X + panelMap.Size.Width) player.Move(speed, 0);
+                moveRight = true;
+            }
+        }
+
+        private void gameTimer_Tick(object sender, EventArgs e)
+        {
+            Point initial = new Point(player.X, player.Y);
+
+            if (moveUp)
+            {
+                player.Move(0, -speed);
+            }
+
+            if (moveDown)
+            {
+                player.Move(0, speed);
+            }
+
+            if (moveLeft)
+            {
+                player.Move(-speed, 0);
+            }
+
+            if (moveRight)
+            {
+                player.Move(speed, 0);
             }
 
             Label tmp = boxPlayer;
@@ -87,15 +123,25 @@ namespace tugas_m3
                 }
             }
 
+            bool borderUp = false;
+            bool borderDown = false;
+            bool borderLeft = false;
+            bool borderRight = false;
+            if (player.Y < 0) borderUp = true;
+            if (player.Y + boxPlayer.Size.Height > panelMap.Location.Y + panelMap.Size.Height) borderDown = true;
+            if (player.X < 0) borderLeft = true;
+            if (player.X + boxPlayer.Size.Width > panelMap.Location.X + panelMap.Size.Width) borderRight = true;
+
             if (!isValid)
             {
-                player.X = inital.X;
-                player.Y = inital.Y;
+                player.X = initial.X;
+                player.Y = initial.Y;
             }
-        }
+            if (borderUp) player.Y = 0;
+            if (borderDown) player.Y = panelMap.Location.Y + panelMap.Size.Height - boxPlayer.Size.Height;
+            if (borderLeft) player.X = 0;
+            if (borderRight) player.X = panelMap.Location.X + panelMap.Size.Width - boxPlayer.Size.Height;
 
-        private void gameTimer_Tick(object sender, EventArgs e)
-        {
             boxPlayer.Location = new Point(player.X, player.Y);
             timerRefresh();
             clock++;
@@ -103,7 +149,7 @@ namespace tugas_m3
 
         private void timerRefresh()
         {
-            string time_shown = (clock / 10).ToString();
+            string time_shown = (clock / 50).ToString();
             labelTimer.Text = time_shown;
         }
 
@@ -116,6 +162,37 @@ namespace tugas_m3
         {
             gameInit();
             playerInit();
+        }
+
+        private void speedTimer_Tick(object sender, EventArgs e)
+        {
+            //speed++;
+        }
+
+        private void ZCOM_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.W)
+            {
+                moveUp = false;
+            }
+
+            if (e.KeyCode == Keys.S)
+            {
+                moveDown = false;
+            }
+
+            if (e.KeyCode == Keys.A)
+            {
+                moveLeft = false;
+            }
+
+            if (e.KeyCode == Keys.D)
+            {
+                moveRight = false;
+            }
+
+            speedTimer.Stop();
+            speed = inital_speed;
         }
     }
 }

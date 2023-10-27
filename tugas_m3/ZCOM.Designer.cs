@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panelMap = new System.Windows.Forms.Panel();
+            this.boxPlayer = new System.Windows.Forms.Label();
             this.boxKey = new System.Windows.Forms.Label();
             this.boxExit = new System.Windows.Forms.Label();
             this.boxDoor3 = new System.Windows.Forms.Label();
@@ -53,7 +54,6 @@
             this.barrier1 = new System.Windows.Forms.Label();
             this.barrier11 = new System.Windows.Forms.Label();
             this.barrier16 = new System.Windows.Forms.Label();
-            this.boxPlayer = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.labelTimer = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -61,6 +61,7 @@
             this.txtStatus = new System.Windows.Forms.TextBox();
             this.btnPause = new System.Windows.Forms.Button();
             this.gameTimer = new System.Windows.Forms.Timer(this.components);
+            this.speedTimer = new System.Windows.Forms.Timer(this.components);
             this.panelMap.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -95,6 +96,16 @@
             this.panelMap.Name = "panelMap";
             this.panelMap.Size = new System.Drawing.Size(750, 500);
             this.panelMap.TabIndex = 0;
+            // 
+            // boxPlayer
+            // 
+            this.boxPlayer.BackColor = System.Drawing.Color.Gray;
+            this.boxPlayer.Location = new System.Drawing.Point(1, 449);
+            this.boxPlayer.Name = "boxPlayer";
+            this.boxPlayer.Size = new System.Drawing.Size(50, 50);
+            this.boxPlayer.TabIndex = 0;
+            this.boxPlayer.Text = "P";
+            this.boxPlayer.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // boxKey
             // 
@@ -179,7 +190,7 @@
             this.barrier7.BackColor = System.Drawing.Color.White;
             this.barrier7.Location = new System.Drawing.Point(601, 71);
             this.barrier7.Name = "barrier7";
-            this.barrier7.Size = new System.Drawing.Size(10, 96);
+            this.barrier7.Size = new System.Drawing.Size(10, 87);
             this.barrier7.TabIndex = 15;
             // 
             // barrier6
@@ -294,16 +305,6 @@
             this.barrier16.Size = new System.Drawing.Size(621, 10);
             this.barrier16.TabIndex = 1;
             // 
-            // boxPlayer
-            // 
-            this.boxPlayer.BackColor = System.Drawing.Color.Gray;
-            this.boxPlayer.Location = new System.Drawing.Point(1, 449);
-            this.boxPlayer.Name = "boxPlayer";
-            this.boxPlayer.Size = new System.Drawing.Size(50, 50);
-            this.boxPlayer.TabIndex = 0;
-            this.boxPlayer.Text = "P";
-            this.boxPlayer.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -369,6 +370,10 @@
             this.gameTimer.Interval = 20;
             this.gameTimer.Tick += new System.EventHandler(this.gameTimer_Tick);
             // 
+            // speedTimer
+            // 
+            this.speedTimer.Tick += new System.EventHandler(this.speedTimer_Tick);
+            // 
             // ZCOM
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -388,6 +393,7 @@
             this.Load += new System.EventHandler(this.ZCOM_Load);
             this.Shown += new System.EventHandler(this.ZCOM_Shown);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ZCOM_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ZCOM_KeyUp);
             this.panelMap.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -428,6 +434,7 @@
         private System.Windows.Forms.Label boxExit;
         private System.Windows.Forms.Label boxKey;
         private System.Windows.Forms.Timer gameTimer;
+        private System.Windows.Forms.Timer speedTimer;
     }
 }
 
