@@ -507,6 +507,11 @@ namespace tugas_m3
                         }
                     }
 
+                    if(zombie.boxZombie.Bounds.IntersectsWith(boxSafeZone.Bounds))
+                    {
+                        through = true;
+                    }
+
                     //foreach (Label boxZombie in panelMap.Controls)
                     //{
                     //    if (boxZombie == zombie.boxZombie)
