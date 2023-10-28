@@ -282,6 +282,33 @@ namespace tugas_m3
                     break;
                 }
             }
+
+            bool isDead = false;
+            foreach (Zombie zombie in list_zombies)
+            {
+                foreach (Bullet bullet in list_bullets)
+                {
+                    if (bullet.boxBullet.Bounds.IntersectsWith(zombie.boxZombie.Bounds))
+                    {
+                        panelMap.Controls.Remove(bullet.boxBullet);
+                        list_bullets.Remove(bullet);
+
+                        if (zombie.HP > 1)
+                        {
+                            zombie.HP -= player.weapon.Damage;
+                        }
+                        else
+                        {
+                            panelMap.Controls.Remove(zombie.boxZombie);
+                            list_zombies.Remove(zombie);
+                            isDead = true;
+                        }
+                        break;
+                    }
+
+                }
+                if (isDead) break;
+            }
         }
 
         private void timerRefresh()
