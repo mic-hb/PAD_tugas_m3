@@ -282,20 +282,18 @@ namespace tugas_m3
                     break;
                 }
             }
-
-            timerRefresh();
-            clock++;
         }
 
         private void timerRefresh()
         {
-            string time_shown = (clock / 50).ToString();
+            string time_shown = clock.ToString();
             labelTimer.Text = time_shown;
         }
 
         private void ZCOM_Shown(object sender, EventArgs e)
         {
             gameTimer.Start();
+            clockTimer.Start();
             spawnTimer.Start();
             zombieTimer.Start();
         }
@@ -451,21 +449,25 @@ namespace tugas_m3
                     if (zombie.X < 0)
                     {
                         zombie.X = 0;
+                        zombie.Move();
                         break;
                     }
                     if (zombie.X > panelMap.Location.X + panelMap.Size.Width - zombie.boxZombie.Width)
                     {
                         zombie.X = panelMap.Location.X + panelMap.Size.Width - zombie.boxZombie.Width;
+                        zombie.Move();
                         break;
                     }
                     if (zombie.Y < 0)
                     {
                         zombie.Y = 0;
+                        zombie.Move();
                         break;
                     }
                     if (zombie.Y > panelMap.Location.Y + panelMap.Size.Height - zombie.boxZombie.Height)
                     {
                         zombie.Y = panelMap.Location.Y + panelMap.Size.Height - zombie.boxZombie.Height;
+                        zombie.Move();
                         break;
                     }
 
@@ -492,7 +494,7 @@ namespace tugas_m3
 
         private void spawnTimer_Tick(object sender, EventArgs e)
         {
-            int jumlah_zombie = clock / 50 / 60 + 1;
+            int jumlah_zombie = clock / 60 + 1;
             txtStatus.Text = "Jumlah zombie : " + jumlah_zombie.ToString() + "\n " + tmp;
 
             for (int i = 0; i < jumlah_zombie; i++)
@@ -514,7 +516,6 @@ namespace tugas_m3
                     }
                 }
 
-
                 Label boxZombie = new Label();
                 boxZombie.Name = "zombie";
                 boxZombie.Size = new Size(zombie_dimension, zombie_dimension);
@@ -531,6 +532,12 @@ namespace tugas_m3
             }
 
             tmp++;
+        }
+
+        private void clockTimer_Tick(object sender, EventArgs e)
+        {
+            timerRefresh();
+            clock++;
         }
     }
 }

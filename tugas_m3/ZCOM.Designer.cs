@@ -65,6 +65,7 @@
             this.fireTimer = new System.Windows.Forms.Timer(this.components);
             this.zombieTimer = new System.Windows.Forms.Timer(this.components);
             this.spawnTimer = new System.Windows.Forms.Timer(this.components);
+            this.clockTimer = new System.Windows.Forms.Timer(this.components);
             this.panelMap.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -392,6 +393,11 @@
             this.spawnTimer.Interval = 10000;
             this.spawnTimer.Tick += new System.EventHandler(this.spawnTimer_Tick);
             // 
+            // clockTimer
+            // 
+            this.clockTimer.Interval = 1000;
+            this.clockTimer.Tick += new System.EventHandler(this.clockTimer_Tick);
+            // 
             // ZCOM
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -456,6 +462,7 @@
         private System.Windows.Forms.Timer fireTimer;
         private System.Windows.Forms.Timer zombieTimer;
         private System.Windows.Forms.Timer spawnTimer;
+        private System.Windows.Forms.Timer clockTimer;
     }
 }
 
