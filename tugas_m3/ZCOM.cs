@@ -18,6 +18,7 @@ namespace tugas_m3
         private int clock;
         private List<Label> list_barriers;
         private List<Bullet> list_bullets;
+        private List<Zombie> list_zombies;
         private const int inital_speed = 5;
         private int speed;
         private bool moveUp;
@@ -32,6 +33,7 @@ namespace tugas_m3
             player = new Player();
             list_barriers = new List<Label>();
             list_bullets = new List<Bullet>();
+            list_zombies = new List<Zombie>();
             moveUp = false;
             moveDown = false;
             moveLeft = false;
@@ -63,7 +65,8 @@ namespace tugas_m3
             player.X = 1;
             player.Y = 449;
             boxPlayer.Location = new Point(player.X, player.Y);
-            fireTimer.Interval = player.weapon.FireRate * 1000;
+            fireTimer.Interval = (int)(player.weapon.FireRate * 1000);
+            //fireTimer.Interval = 20;
         }
 
         private void ZCOM_KeyDown(object sender, KeyEventArgs e)
@@ -292,12 +295,37 @@ namespace tugas_m3
         private void ZCOM_Shown(object sender, EventArgs e)
         {
             gameTimer.Start();
+            timerZombie.Start();
         }
 
         private void ZCOM_Load(object sender, EventArgs e)
         {
             gameInit();
             playerInit();
+            zombieInit();
+        }
+
+        private void zombieInit()
+        {
+            int zombie_dimension = 50;
+            int zombie_x = boxDoor1.Location.X + boxDoor1.Width / 2 - zombie_dimension / 2;
+            int zombie_y = boxDoor1.Location.Y + boxDoor1.Height / 2 - zombie_dimension / 2;
+            //int zombie_x = boxDoor1.Location.X;
+            //int zombie_y = boxDoor1.Location.Y;
+
+            Label boxZombie = new Label();
+            boxZombie.Name = "bullet";
+            boxZombie.Size = new Size(zombie_dimension, zombie_dimension);
+            boxZombie.AutoSize = false;
+            boxZombie.Location = new Point(zombie_x, zombie_y);
+            boxZombie.BackColor = Color.White;
+            boxZombie.Text = "Z";
+            boxZombie.TextAlign = ContentAlignment.MiddleCenter;
+            boxZombie.BringToFront();
+            panelMap.Controls.Add(boxZombie);
+
+            Zombie zombie = new Zombie("zombie", zombie_x, zombie_y, boxZombie);
+            list_zombies.Add(zombie);
         }
 
         private void speedTimer_Tick(object sender, EventArgs e)
@@ -335,6 +363,129 @@ namespace tugas_m3
         {
             canFire = true;
             fireTimer.Stop();
+        }
+
+        private void timerZombie_Tick(object sender, EventArgs e)
+        {
+            foreach (Zombie zombie in list_zombies)
+            {
+                bool through = false;
+                Point initial_zombie = new Point(zombie.X, zombie.Y);
+
+                do
+                {
+                    through = false;
+                    zombie.X = initial_zombie.X;
+                    zombie.Y = initial_zombie.Y;
+                    Random rnd = new Random();
+                    //zombie.direction = rnd.Next(1, 5);
+                    double up = 0;
+                    double down = 0;
+                    double left = 0;
+                    double right = 0;
+                    int preffered_direction = 0;
+
+                    for (int i = 1; i <= 4; i++)
+                    {
+                        zombie.direction = i;
+                        zombie.Move();
+
+                        if (i == 1) up = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
+                        if (i == 2) down = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
+                        if (i == 3) left = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
+                        if (i == 4) right = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
+                        
+                        zombie.X = initial_zombie.X;
+                        zombie.Y = initial_zombie.Y;
+                    }
+                    double min = Math.Min(Math.Min(Math.Min(up, down), left), right);
+                    if (min == up) preffered_direction = 1;
+                    if (min == down) preffered_direction = 2;
+                    if (min == left) preffered_direction = 3;
+                    if (min == right) preffered_direction = 4;
+
+                    zombie.direction = preffered_direction;
+                    zombie.Move();
+                    bool change_prefernce  = false;
+                    foreach (Label barrier in list_barriers)
+                    {
+                        if (zombie.boxZombie.Bounds.IntersectsWith(barrier.Bounds))
+                        {
+                            change_prefernce = true;
+                        }
+                    }
+                    
+                    if(change_prefernce)
+                    {
+                        if (preffered_direction == 1 || preffered_direction == 2)
+                        {
+                            preffered_direction = (rnd.Next(0,2) == 0) ? 3 : 4;
+                        }
+                        if (preffered_direction == 3 || preffered_direction == 4)
+                        {
+                            preffered_direction = (rnd.Next(0, 2) == 0) ? 1 : 2;
+                        }
+                    }
+
+                    int random = rnd.Next(1, 101);
+                    if (random <= 50)
+                    {
+                        zombie.direction = preffered_direction;
+                    }
+                    else
+                    {
+                        zombie.direction = rnd.Next(2, 5);
+                    }
+
+                    zombie.X = initial_zombie.X;
+                    zombie.Y = initial_zombie.Y;
+                    zombie.Move();
+
+                    //if (zombie.X < 0 || zombie.X > panelMap.Location.X + panelMap.Size.Width - zombie.boxZombie.Width || zombie.Y < 0 || zombie.Y > panelMap.Location.Y + panelMap.Size.Height - zombie.boxZombie.Height)
+                    //{
+                    //    through = true;
+                    //}
+
+                    if (zombie.X < 0)
+                    {
+                        zombie.X = 0;
+                        break;
+                    }
+                    if (zombie.X > panelMap.Location.X + panelMap.Size.Width - zombie.boxZombie.Width)
+                    {
+                        zombie.X = panelMap.Location.X + panelMap.Size.Width - zombie.boxZombie.Width;
+                        break;
+                    }
+                    if (zombie.Y < 0)
+                    {
+                        zombie.Y = 0;
+                        break;
+                    }
+                    if (zombie.Y > panelMap.Location.Y + panelMap.Size.Height - zombie.boxZombie.Height)
+                    {
+                        zombie.Y = panelMap.Location.Y + panelMap.Size.Height - zombie.boxZombie.Height;
+                        break;
+                    }
+
+                    foreach (Label barrier in list_barriers)
+                    {
+                        if (zombie.boxZombie.Bounds.IntersectsWith(barrier.Bounds))
+                        {
+                            through = true;
+                            //break;
+                        }
+                    }
+
+                    //foreach (Label boxZombie in panelMap.Controls)
+                    //{
+                    //    if (boxZombie == zombie.boxZombie)
+                    //    {
+                    //        //boxZombie.Location = new Point(zombie.X, zombie.Y);
+                    //        //boxZombie.BringToFront();
+                    //    }
+                    //}
+                } while (through);
+            }
         }
     }
 }

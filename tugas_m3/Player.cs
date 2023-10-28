@@ -14,7 +14,7 @@ namespace tugas_m3
         public Player(string name, int x, int y) : base(name, x, y)
         {
             speed = 10;
-            weapon = new Weapon("Pistol", 1, 1);
+            weapon = new Weapon("Pistol", 1, 0.02);
         }
 
         public Player() : base()
