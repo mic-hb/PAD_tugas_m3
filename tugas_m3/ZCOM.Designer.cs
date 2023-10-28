@@ -63,7 +63,8 @@
             this.gameTimer = new System.Windows.Forms.Timer(this.components);
             this.speedTimer = new System.Windows.Forms.Timer(this.components);
             this.fireTimer = new System.Windows.Forms.Timer(this.components);
-            this.timerZombie = new System.Windows.Forms.Timer(this.components);
+            this.zombieTimer = new System.Windows.Forms.Timer(this.components);
+            this.spawnTimer = new System.Windows.Forms.Timer(this.components);
             this.panelMap.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -381,10 +382,15 @@
             this.fireTimer.Interval = 20;
             this.fireTimer.Tick += new System.EventHandler(this.fireTimer_Tick);
             // 
-            // timerZombie
+            // zombieTimer
             // 
-            this.timerZombie.Interval = 1000;
-            this.timerZombie.Tick += new System.EventHandler(this.timerZombie_Tick);
+            this.zombieTimer.Interval = 1000;
+            this.zombieTimer.Tick += new System.EventHandler(this.timerZombie_Tick);
+            // 
+            // spawnTimer
+            // 
+            this.spawnTimer.Interval = 10000;
+            this.spawnTimer.Tick += new System.EventHandler(this.spawnTimer_Tick);
             // 
             // ZCOM
             // 
@@ -448,7 +454,8 @@
         private System.Windows.Forms.Timer gameTimer;
         private System.Windows.Forms.Timer speedTimer;
         private System.Windows.Forms.Timer fireTimer;
-        private System.Windows.Forms.Timer timerZombie;
+        private System.Windows.Forms.Timer zombieTimer;
+        private System.Windows.Forms.Timer spawnTimer;
     }
 }
 

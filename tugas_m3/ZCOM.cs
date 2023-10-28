@@ -14,6 +14,7 @@ namespace tugas_m3
 {
     public partial class ZCOM : Form
     {
+        private int tmp = 1;
         private Player player;
         private int clock;
         private List<Label> list_barriers;
@@ -295,7 +296,8 @@ namespace tugas_m3
         private void ZCOM_Shown(object sender, EventArgs e)
         {
             gameTimer.Start();
-            timerZombie.Start();
+            spawnTimer.Start();
+            zombieTimer.Start();
         }
 
         private void ZCOM_Load(object sender, EventArgs e)
@@ -314,7 +316,7 @@ namespace tugas_m3
             //int zombie_y = boxDoor1.Location.Y;
 
             Label boxZombie = new Label();
-            boxZombie.Name = "bullet";
+            boxZombie.Name = "zombie";
             boxZombie.Size = new Size(zombie_dimension, zombie_dimension);
             boxZombie.AutoSize = false;
             boxZombie.Location = new Point(zombie_x, zombie_y);
@@ -394,7 +396,7 @@ namespace tugas_m3
                         if (i == 2) down = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
                         if (i == 3) left = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
                         if (i == 4) right = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
-                        
+
                         zombie.X = initial_zombie.X;
                         zombie.Y = initial_zombie.Y;
                     }
@@ -406,7 +408,7 @@ namespace tugas_m3
 
                     zombie.direction = preffered_direction;
                     zombie.Move();
-                    bool change_prefernce  = false;
+                    bool change_prefernce = false;
                     foreach (Label barrier in list_barriers)
                     {
                         if (zombie.boxZombie.Bounds.IntersectsWith(barrier.Bounds))
@@ -414,12 +416,12 @@ namespace tugas_m3
                             change_prefernce = true;
                         }
                     }
-                    
-                    if(change_prefernce)
+
+                    if (change_prefernce)
                     {
                         if (preffered_direction == 1 || preffered_direction == 2)
                         {
-                            preffered_direction = (rnd.Next(0,2) == 0) ? 3 : 4;
+                            preffered_direction = (rnd.Next(0, 2) == 0) ? 3 : 4;
                         }
                         if (preffered_direction == 3 || preffered_direction == 4)
                         {
@@ -486,6 +488,49 @@ namespace tugas_m3
                     //}
                 } while (through);
             }
+        }
+
+        private void spawnTimer_Tick(object sender, EventArgs e)
+        {
+            int jumlah_zombie = clock / 50 / 60 + 1;
+            txtStatus.Text = "Jumlah zombie : " + jumlah_zombie.ToString() + "\n " + tmp;
+
+            for (int i = 0; i < jumlah_zombie; i++)
+            {
+                int zombie_dimension = 50;
+                Random rnd = new Random();
+                int boxDoor = rnd.Next(1, 4);
+
+                int zombie_x = boxDoor1.Location.X + boxDoor1.Width / 2 - zombie_dimension / 2;
+                int zombie_y = boxDoor1.Location.Y + boxDoor1.Height / 2 - zombie_dimension / 2;
+
+                foreach (Label door in panelMap.Controls)
+                {
+                    if (door.Name == "boxDoor" + boxDoor.ToString())
+                    {
+                        zombie_x = door.Location.X + door.Width / 2 - zombie_dimension / 2;
+                        zombie_y = door.Location.Y + door.Height / 2 - zombie_dimension / 2;
+                        break;
+                    }
+                }
+
+
+                Label boxZombie = new Label();
+                boxZombie.Name = "zombie";
+                boxZombie.Size = new Size(zombie_dimension, zombie_dimension);
+                boxZombie.AutoSize = false;
+                boxZombie.Location = new Point(zombie_x, zombie_y);
+                boxZombie.BackColor = Color.White;
+                boxZombie.Text = "Z";
+                boxZombie.TextAlign = ContentAlignment.MiddleCenter;
+                boxZombie.BringToFront();
+                panelMap.Controls.Add(boxZombie);
+
+                Zombie zombie = new Zombie("zombie", zombie_x, zombie_y, boxZombie);
+                list_zombies.Add(zombie);
+            }
+
+            tmp++;
         }
     }
 }
