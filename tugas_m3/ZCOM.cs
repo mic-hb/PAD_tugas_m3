@@ -309,6 +309,18 @@ namespace tugas_m3
                 }
                 if (isDead) break;
             }
+
+            /* 
+             * Safe Zone
+             */
+            if (boxPlayer.Bounds.IntersectsWith(boxSafeZone.Bounds))
+            {
+                btnPause.Enabled = true;
+            }
+            else
+            {
+                btnPause.Enabled = false;
+            }
         }
 
         private void timerRefresh()
@@ -511,7 +523,7 @@ namespace tugas_m3
                         }
                     }
 
-                    if(zombie.boxZombie.Bounds.IntersectsWith(boxSafeZone.Bounds))
+                    if (zombie.boxZombie.Bounds.IntersectsWith(boxSafeZone.Bounds))
                     {
                         through = true;
                     }
@@ -574,6 +586,47 @@ namespace tugas_m3
         {
             timerRefresh();
             clock++;
+        }
+
+        private void btnPause_Click(object sender, EventArgs e)
+        {
+            if (btnPause.Text == "Pause")
+            {
+                // Game Paused
+                gameTimer.Stop();
+                clockTimer.Stop();
+                spawnTimer.Stop();
+                zombieTimer.Stop();
+                btnPause.Text = "Resume";
+
+                Label paused = new Label();
+                paused.Name = "paused";
+                paused.Size = new Size(100, 50);
+                paused.AutoSize = false;
+                paused.Location = new Point(panelMap.Location.X + panelMap.Width / 2 - paused.Width / 2, panelMap.Location.Y + panelMap.Height / 2 - paused.Height / 2);
+                paused.BackColor = Color.Yellow;
+                paused.Text = "Paused";
+                paused.TextAlign = ContentAlignment.MiddleCenter;
+                panelMap.Controls.Add(paused);
+                paused.BringToFront();
+            }else
+            {
+                // Game Resumed
+                gameTimer.Start();
+                clockTimer.Start();
+                spawnTimer.Start();
+                zombieTimer.Start();
+                btnPause.Text = "Pause";
+
+                foreach (Label paused in panelMap.Controls)
+                {
+                    if (paused.Name == "paused")
+                    {
+                        panelMap.Controls.Remove(paused);
+                        break;
+                    }
+                }
+            }
         }
     }
 }

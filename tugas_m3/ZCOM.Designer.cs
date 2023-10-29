@@ -360,6 +360,7 @@
             // 
             // btnPause
             // 
+            this.btnPause.Enabled = false;
             this.btnPause.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPause.Location = new System.Drawing.Point(674, 522);
             this.btnPause.Name = "btnPause";
@@ -367,6 +368,7 @@
             this.btnPause.TabIndex = 6;
             this.btnPause.Text = "Pause";
             this.btnPause.UseVisualStyleBackColor = true;
+            this.btnPause.Click += new System.EventHandler(this.btnPause_Click);
             // 
             // gameTimer
             // 
