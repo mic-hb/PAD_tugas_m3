@@ -66,6 +66,7 @@
             this.zombieTimer = new System.Windows.Forms.Timer(this.components);
             this.spawnTimer = new System.Windows.Forms.Timer(this.components);
             this.clockTimer = new System.Windows.Forms.Timer(this.components);
+            this.keyTimer = new System.Windows.Forms.Timer(this.components);
             this.panelMap.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -120,6 +121,7 @@
             this.boxKey.TabIndex = 22;
             this.boxKey.Text = "KEY";
             this.boxKey.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.boxKey.Visible = false;
             // 
             // boxExit
             // 
@@ -400,6 +402,11 @@
             this.clockTimer.Interval = 1000;
             this.clockTimer.Tick += new System.EventHandler(this.clockTimer_Tick);
             // 
+            // keyTimer
+            // 
+            this.keyTimer.Interval = 120000;
+            this.keyTimer.Tick += new System.EventHandler(this.keyTimer_Tick);
+            // 
             // ZCOM
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -465,6 +472,7 @@
         private System.Windows.Forms.Timer zombieTimer;
         private System.Windows.Forms.Timer spawnTimer;
         private System.Windows.Forms.Timer clockTimer;
+        private System.Windows.Forms.Timer keyTimer;
     }
 }
 

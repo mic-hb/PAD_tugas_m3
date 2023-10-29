@@ -27,6 +27,8 @@ namespace tugas_m3
         private bool moveLeft;
         private bool moveRight;
         private bool canFire;
+        private bool exitPressed;
+        private bool throughWall;
 
         public ZCOM()
         {
@@ -46,6 +48,8 @@ namespace tugas_m3
         private void gameInit()
         {
             clock = 0;
+            exitPressed = false;
+            throughWall = false;
 
             for (int i = 1; i <= 16; i++)
             {
@@ -76,6 +80,11 @@ namespace tugas_m3
             int bullet_dimension = 5;
             int bullet_x = player.X + boxPlayer.Size.Width / 2 - bullet_dimension;
             int bullet_y = player.Y + boxPlayer.Size.Height / 2 - bullet_dimension;
+
+            if (e.KeyCode == Keys.E)
+            {
+                exitPressed = true;
+            }
 
             if (e.KeyCode == Keys.W)
             {
@@ -193,6 +202,52 @@ namespace tugas_m3
                 }
             }
 
+            /*
+             * Cheats
+             */
+            if (e.KeyCode == Keys.Z)
+            {
+                cheatZombie();
+            }
+
+            if (e.KeyCode == Keys.X)
+            {
+                throughWall = !throughWall;
+            }
+        }
+
+        private void cheatZombie()
+        {
+            int zombie_dimension = 50;
+            Random rnd = new Random();
+            int boxDoor = rnd.Next(1, 4);
+
+            int zombie_x = boxDoor1.Location.X + boxDoor1.Width / 2 - zombie_dimension / 2;
+            int zombie_y = boxDoor1.Location.Y + boxDoor1.Height / 2 - zombie_dimension / 2;
+
+            foreach (Label door in panelMap.Controls)
+            {
+                if (door.Name == "boxDoor" + boxDoor.ToString())
+                {
+                    zombie_x = door.Location.X + door.Width / 2 - zombie_dimension / 2;
+                    zombie_y = door.Location.Y + door.Height / 2 - zombie_dimension / 2;
+                    break;
+                }
+            }
+
+            Label boxZombie = new Label();
+            boxZombie.Name = "zombie";
+            boxZombie.Size = new Size(zombie_dimension, zombie_dimension);
+            boxZombie.AutoSize = false;
+            boxZombie.Location = new Point(zombie_x, zombie_y);
+            boxZombie.BackColor = Color.White;
+            boxZombie.Text = "Z";
+            boxZombie.TextAlign = ContentAlignment.MiddleCenter;
+            boxZombie.BringToFront();
+            panelMap.Controls.Add(boxZombie);
+
+            Zombie zombie = new Zombie("zombie", zombie_x, zombie_y, boxZombie);
+            list_zombies.Add(zombie);
         }
 
         private void gameTimer_Tick(object sender, EventArgs e)
@@ -223,12 +278,15 @@ namespace tugas_m3
             tmp.Location = new Point(player.X, player.Y);
 
             bool isValid = true;
-            foreach (Label barrier in list_barriers)
+            if (!throughWall)
             {
-                if (tmp.Bounds.IntersectsWith(barrier.Bounds))
+                foreach (Label barrier in list_barriers)
                 {
-                    isValid = false;
-                    break;
+                    if (tmp.Bounds.IntersectsWith(barrier.Bounds))
+                    {
+                        isValid = false;
+                        break;
+                    }
                 }
             }
 
@@ -321,6 +379,38 @@ namespace tugas_m3
             {
                 btnPause.Enabled = false;
             }
+
+            /*
+             * Key
+             */
+            if (boxPlayer.Bounds.IntersectsWith(boxKey.Bounds))
+            {
+                if (boxKey.Visible == true)
+                {
+                    boxKey.Visible = false;
+                    boxPlayer.BackColor = Color.Yellow;
+                }
+            }
+
+            /*
+             * Exit
+             */
+            if (boxPlayer.Bounds.IntersectsWith(boxExit.Bounds))
+            {
+                if (boxPlayer.BackColor == Color.Yellow)
+                {
+                    if (exitPressed)
+                    {
+                        gameTimer.Stop();
+                        clockTimer.Stop();
+                        spawnTimer.Stop();
+                        zombieTimer.Stop();
+                        keyTimer.Stop();
+                        MessageBox.Show("Congratulation!");
+                        this.Close();
+                    }
+                }
+            }
         }
 
         private void timerRefresh()
@@ -335,6 +425,7 @@ namespace tugas_m3
             clockTimer.Start();
             spawnTimer.Start();
             zombieTimer.Start();
+            keyTimer.Start();
         }
 
         private void ZCOM_Load(object sender, EventArgs e)
@@ -392,6 +483,11 @@ namespace tugas_m3
             if (e.KeyCode == Keys.D)
             {
                 moveRight = false;
+            }
+
+            if (e.KeyCode == Keys.E)
+            {
+                exitPressed = false;
             }
 
             speedTimer.Stop();
@@ -609,7 +705,8 @@ namespace tugas_m3
                 paused.TextAlign = ContentAlignment.MiddleCenter;
                 panelMap.Controls.Add(paused);
                 paused.BringToFront();
-            }else
+            }
+            else
             {
                 // Game Resumed
                 gameTimer.Start();
@@ -627,6 +724,12 @@ namespace tugas_m3
                     }
                 }
             }
+        }
+
+        private void keyTimer_Tick(object sender, EventArgs e)
+        {
+            boxKey.Visible = true;
+            keyTimer.Stop();
         }
     }
 }
