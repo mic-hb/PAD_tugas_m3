@@ -26,7 +26,7 @@ namespace tugas_m3
             this.HP = 5;
         }
 
-        public void Move()
+        public void Move(bool isMoving)
         {
             if (direction == 1)
             {
@@ -45,8 +45,11 @@ namespace tugas_m3
                 this.X += speed;
             }
 
-            this.boxZombie.Location = new System.Drawing.Point(this.X, this.Y);
-            this.boxZombie.BringToFront();
+            if (isMoving)
+            {
+                this.boxZombie.Location = new System.Drawing.Point(this.X, this.Y);
+                this.boxZombie.BringToFront();
+            }
         }
     }
 }

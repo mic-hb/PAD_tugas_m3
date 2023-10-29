@@ -415,7 +415,7 @@ namespace tugas_m3
                     for (int i = 1; i <= 4; i++)
                     {
                         zombie.direction = i;
-                        zombie.Move();
+                        zombie.Move(false);
 
                         if (i == 1) up = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
                         if (i == 2) down = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
@@ -432,7 +432,7 @@ namespace tugas_m3
                     if (min == right) preffered_direction = 4;
 
                     zombie.direction = preffered_direction;
-                    zombie.Move();
+                    zombie.Move(false);
                     bool change_prefernce = false;
                     foreach (Label barrier in list_barriers)
                     {
@@ -466,7 +466,7 @@ namespace tugas_m3
 
                     zombie.X = initial_zombie.X;
                     zombie.Y = initial_zombie.Y;
-                    zombie.Move();
+                    zombie.Move(true);
 
                     //if (zombie.X < 0 || zombie.X > panelMap.Location.X + panelMap.Size.Width - zombie.boxZombie.Width || zombie.Y < 0 || zombie.Y > panelMap.Location.Y + panelMap.Size.Height - zombie.boxZombie.Height)
                     //{
@@ -476,25 +476,29 @@ namespace tugas_m3
                     if (zombie.X < 0)
                     {
                         zombie.X = 0;
-                        zombie.Move();
+                        zombie.Move(true);
+                        through = true;
                         break;
                     }
                     if (zombie.X > panelMap.Location.X + panelMap.Size.Width - zombie.boxZombie.Width)
                     {
                         zombie.X = panelMap.Location.X + panelMap.Size.Width - zombie.boxZombie.Width;
-                        zombie.Move();
+                        zombie.Move(true);
+                        through = true;
                         break;
                     }
                     if (zombie.Y < 0)
                     {
                         zombie.Y = 0;
-                        zombie.Move();
+                        zombie.Move(true);
+                        through = true;
                         break;
                     }
                     if (zombie.Y > panelMap.Location.Y + panelMap.Size.Height - zombie.boxZombie.Height)
                     {
                         zombie.Y = panelMap.Location.Y + panelMap.Size.Height - zombie.boxZombie.Height;
-                        zombie.Move();
+                        zombie.Move(true);
+                        through = true;
                         break;
                     }
 
