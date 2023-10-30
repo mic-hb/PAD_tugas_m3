@@ -70,7 +70,7 @@ namespace tugas_m3
             player.X = 1;
             player.Y = 449;
             boxPlayer.Location = new Point(player.X, player.Y);
-            fireTimer.Interval = (int)(player.weapon.FireRate * 1000);
+            fireTimer.Interval = (int)(player.Weapon.FireRate * 1000);
             //fireTimer.Interval = 20;
         }
 
@@ -214,6 +214,17 @@ namespace tugas_m3
             {
                 throughWall = !throughWall;
             }
+
+            if(e.KeyCode == Keys.C)
+            {
+                boxKey.Visible = true;
+                keyTimer.Stop();
+            }
+
+            if(e.KeyCode == Keys.V)
+            {
+                player.Poin += 50;
+            }
         }
 
         private void cheatZombie()
@@ -252,6 +263,12 @@ namespace tugas_m3
 
         private void gameTimer_Tick(object sender, EventArgs e)
         {
+            /*
+             * Poin
+             */
+            labelPoin.Text = player.Poin.ToString();
+
+
             Point initial = new Point(player.X, player.Y);
 
             if (moveUp)
@@ -353,7 +370,7 @@ namespace tugas_m3
 
                         if (zombie.HP > 1)
                         {
-                            zombie.HP -= player.weapon.Damage;
+                            zombie.HP -= player.Weapon.Damage;
                         }
                         else
                         {

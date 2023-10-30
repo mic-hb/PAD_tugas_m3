@@ -10,17 +10,20 @@ namespace tugas_m3
     internal class Player : Entity
     {
         private int speed;
-        public Weapon weapon { get; set; }
+        public int Poin { get; set; }
+        public Weapon Weapon { get; set; }
         public Player(string name, int x, int y) : base(name, x, y)
         {
             speed = 10;
-            weapon = new Weapon("Pistol", 1, 0.02);
+            Poin = 0;
+            Weapon = new Weapon("Pistol", 1, 0.02);
         }
 
         public Player() : base()
         {
             speed = 10;
-            weapon = new Weapon("Pistol", 1, 1);
+            Poin = 0;
+            Weapon = new Weapon("Pistol", 1, 1);
         }
 
         public void Move(KeyEventArgs e)
