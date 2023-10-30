@@ -376,6 +376,7 @@ namespace tugas_m3
                         {
                             panelMap.Controls.Remove(zombie.boxZombie);
                             list_zombies.Remove(zombie);
+                            player.Poin += 10;
                             isDead = true;
                         }
                         break;
@@ -530,7 +531,8 @@ namespace tugas_m3
                     zombie.X = initial_zombie.X;
                     zombie.Y = initial_zombie.Y;
                     Random rnd = new Random();
-                    //zombie.direction = rnd.Next(1, 5);
+                    zombie.direction = rnd.Next(1, 5);
+
                     double up = 0;
                     double down = 0;
                     double left = 0;
