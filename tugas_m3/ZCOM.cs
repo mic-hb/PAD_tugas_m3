@@ -15,6 +15,7 @@ namespace tugas_m3
     public partial class ZCOM : Form
     {
         private int tmp = 1;
+        private int spawn = 10;
         private Player player;
         private int clock;
         private List<Label> list_barriers;
@@ -215,13 +216,13 @@ namespace tugas_m3
                 throughWall = !throughWall;
             }
 
-            if(e.KeyCode == Keys.C)
+            if (e.KeyCode == Keys.C)
             {
                 boxKey.Visible = true;
                 keyTimer.Stop();
             }
 
-            if(e.KeyCode == Keys.V)
+            if (e.KeyCode == Keys.V)
             {
                 player.Poin += 50;
             }
@@ -336,8 +337,9 @@ namespace tugas_m3
             //    }
             //}
 
-            foreach (Bullet bullet in list_bullets)
+            for (int i = list_bullets.Count - 1; i >= 0; i--)
             {
+                Bullet bullet = list_bullets[i];
                 bullet.Move();
 
                 foreach (Label boxBullet in panelMap.Controls)
@@ -355,6 +357,19 @@ namespace tugas_m3
                     panelMap.Controls.Remove(bullet.boxBullet);
                     list_bullets.Remove(bullet);
                     break;
+                }
+
+                /*
+                 * Kena tembok
+                 */
+                foreach (Label barrier in list_barriers)
+                {
+                    if (bullet.boxBullet.Bounds.IntersectsWith(barrier.Bounds))
+                    {
+                        panelMap.Controls.Remove(bullet.boxBullet);
+                        list_bullets.Remove(bullet);
+                        break;
+                    }
                 }
             }
 
@@ -385,6 +400,7 @@ namespace tugas_m3
                 }
                 if (isDead) break;
             }
+
 
             /* 
              * Safe Zone
@@ -424,8 +440,26 @@ namespace tugas_m3
                         spawnTimer.Stop();
                         zombieTimer.Stop();
                         keyTimer.Stop();
-                        MessageBox.Show("Congratulation!");
-                        this.Close();
+
+                        DialogResult dr = MessageBox.Show("Do you want to play again?", "Congratulations!", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        if (dr == DialogResult.Yes)
+                        {
+                            gameTimer.Start();
+                            clockTimer.Start();
+                            spawnTimer.Start();
+                            zombieTimer.Start();
+                            keyTimer.Start();
+
+                            gameInit();
+                            playerInit();
+                            zombieInit();
+
+                            boxPlayer.BackColor = Color.White;
+                        }
+                        else if (dr == DialogResult.No)
+                        {
+                            this.Close();
+                        }
                     }
                 }
             }
@@ -533,63 +567,63 @@ namespace tugas_m3
                     Random rnd = new Random();
                     zombie.direction = rnd.Next(1, 5);
 
-                    double up = 0;
-                    double down = 0;
-                    double left = 0;
-                    double right = 0;
-                    int preffered_direction = 0;
+                    //double up = 0;
+                    //double down = 0;
+                    //double left = 0;
+                    //double right = 0;
+                    //int preffered_direction = 0;
 
-                    for (int i = 1; i <= 4; i++)
-                    {
-                        zombie.direction = i;
-                        zombie.Move(false);
+                    //for (int i = 1; i <= 4; i++)
+                    //{
+                    //    zombie.direction = i;
+                    //    zombie.Move(false);
 
-                        if (i == 1) up = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
-                        if (i == 2) down = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
-                        if (i == 3) left = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
-                        if (i == 4) right = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
+                    //    if (i == 1) up = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
+                    //    if (i == 2) down = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
+                    //    if (i == 3) left = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
+                    //    if (i == 4) right = Math.Sqrt(Math.Pow(zombie.X - player.X, 2) + Math.Pow(zombie.Y - player.Y, 2));
 
-                        zombie.X = initial_zombie.X;
-                        zombie.Y = initial_zombie.Y;
-                    }
-                    double min = Math.Min(Math.Min(Math.Min(up, down), left), right);
-                    if (min == up) preffered_direction = 1;
-                    if (min == down) preffered_direction = 2;
-                    if (min == left) preffered_direction = 3;
-                    if (min == right) preffered_direction = 4;
+                    //    zombie.X = initial_zombie.X;
+                    //    zombie.Y = initial_zombie.Y;
+                    //}
+                    //double min = Math.Min(Math.Min(Math.Min(up, down), left), right);
+                    //if (min == up) preffered_direction = 1;
+                    //if (min == down) preffered_direction = 2;
+                    //if (min == left) preffered_direction = 3;
+                    //if (min == right) preffered_direction = 4;
 
-                    zombie.direction = preffered_direction;
-                    zombie.Move(false);
-                    bool change_prefernce = false;
-                    foreach (Label barrier in list_barriers)
-                    {
-                        if (zombie.boxZombie.Bounds.IntersectsWith(barrier.Bounds))
-                        {
-                            change_prefernce = true;
-                        }
-                    }
+                    //zombie.direction = preffered_direction;
+                    //zombie.Move(false);
+                    //bool change_prefernce = false;
+                    //foreach (Label barrier in list_barriers)
+                    //{
+                    //    if (zombie.boxZombie.Bounds.IntersectsWith(barrier.Bounds))
+                    //    {
+                    //        change_prefernce = true;
+                    //    }
+                    //}
 
-                    if (change_prefernce)
-                    {
-                        if (preffered_direction == 1 || preffered_direction == 2)
-                        {
-                            preffered_direction = (rnd.Next(0, 2) == 0) ? 3 : 4;
-                        }
-                        if (preffered_direction == 3 || preffered_direction == 4)
-                        {
-                            preffered_direction = (rnd.Next(0, 2) == 0) ? 1 : 2;
-                        }
-                    }
+                    //if (change_prefernce)
+                    //{
+                    //    if (preffered_direction == 1 || preffered_direction == 2)
+                    //    {
+                    //        preffered_direction = (rnd.Next(0, 2) == 0) ? 3 : 4;
+                    //    }
+                    //    if (preffered_direction == 3 || preffered_direction == 4)
+                    //    {
+                    //        preffered_direction = (rnd.Next(0, 2) == 0) ? 1 : 2;
+                    //    }
+                    //}
 
-                    int random = rnd.Next(1, 101);
-                    if (random <= 50)
-                    {
-                        zombie.direction = preffered_direction;
-                    }
-                    else
-                    {
-                        zombie.direction = rnd.Next(2, 5);
-                    }
+                    //int random = rnd.Next(1, 101);
+                    //if (random <= 50)
+                    //{
+                    //    zombie.direction = preffered_direction;
+                    //}
+                    //else
+                    //{
+                    //    zombie.direction = rnd.Next(2, 5);
+                    //}
 
                     zombie.X = initial_zombie.X;
                     zombie.Y = initial_zombie.Y;
@@ -657,48 +691,93 @@ namespace tugas_m3
 
         private void spawnTimer_Tick(object sender, EventArgs e)
         {
-            int jumlah_zombie = clock / 60 + 1;
-            txtStatus.Text = "Jumlah zombie : " + jumlah_zombie.ToString() + "\n " + tmp;
+            //int jumlah_zombie = clock / 60 + 1;
+            //txtStatus.Text = "Jumlah zombie : " + jumlah_zombie.ToString() + "\n " + tmp;
 
-            for (int i = 0; i < jumlah_zombie; i++)
-            {
-                int zombie_dimension = 50;
-                Random rnd = new Random();
-                int boxDoor = rnd.Next(1, 4);
+            //for (int i = 0; i < jumlah_zombie; i++)
+            //{
+            //    int zombie_dimension = 50;
+            //    Random rnd = new Random();
+            //    int boxDoor = rnd.Next(1, 4);
 
-                int zombie_x = boxDoor1.Location.X + boxDoor1.Width / 2 - zombie_dimension / 2;
-                int zombie_y = boxDoor1.Location.Y + boxDoor1.Height / 2 - zombie_dimension / 2;
+            //    int zombie_x = boxDoor1.Location.X + boxDoor1.Width / 2 - zombie_dimension / 2;
+            //    int zombie_y = boxDoor1.Location.Y + boxDoor1.Height / 2 - zombie_dimension / 2;
 
-                foreach (Label door in panelMap.Controls)
-                {
-                    if (door.Name == "boxDoor" + boxDoor.ToString())
-                    {
-                        zombie_x = door.Location.X + door.Width / 2 - zombie_dimension / 2;
-                        zombie_y = door.Location.Y + door.Height / 2 - zombie_dimension / 2;
-                        break;
-                    }
-                }
+            //    foreach (Label door in panelMap.Controls)
+            //    {
+            //        if (door.Name == "boxDoor" + boxDoor.ToString())
+            //        {
+            //            zombie_x = door.Location.X + door.Width / 2 - zombie_dimension / 2;
+            //            zombie_y = door.Location.Y + door.Height / 2 - zombie_dimension / 2;
+            //            break;
+            //        }
+            //    }
 
-                Label boxZombie = new Label();
-                boxZombie.Name = "zombie";
-                boxZombie.Size = new Size(zombie_dimension, zombie_dimension);
-                boxZombie.AutoSize = false;
-                boxZombie.Location = new Point(zombie_x, zombie_y);
-                boxZombie.BackColor = Color.White;
-                boxZombie.Text = "Z";
-                boxZombie.TextAlign = ContentAlignment.MiddleCenter;
-                boxZombie.BringToFront();
-                panelMap.Controls.Add(boxZombie);
+            //    Label boxZombie = new Label();
+            //    boxZombie.Name = "zombie";
+            //    boxZombie.Size = new Size(zombie_dimension, zombie_dimension);
+            //    boxZombie.AutoSize = false;
+            //    boxZombie.Location = new Point(zombie_x, zombie_y);
+            //    boxZombie.BackColor = Color.White;
+            //    boxZombie.Text = "Z";
+            //    boxZombie.TextAlign = ContentAlignment.MiddleCenter;
+            //    boxZombie.BringToFront();
+            //    panelMap.Controls.Add(boxZombie);
 
-                Zombie zombie = new Zombie("zombie", zombie_x, zombie_y, boxZombie);
-                list_zombies.Add(zombie);
-            }
+            //    Zombie zombie = new Zombie("zombie", zombie_x, zombie_y, boxZombie);
+            //    list_zombies.Add(zombie);
+            //}
 
-            tmp++;
+            //tmp++;
         }
 
         private void clockTimer_Tick(object sender, EventArgs e)
         {
+            /*
+             * Spawn Zombie
+             */
+            if (clock % 10 == 0 && clock != 0)
+            {
+                int jumlah_zombie = clock / 60 + 1;
+
+                for (int i = 0; i < jumlah_zombie; i++)
+                {
+                    int zombie_dimension = 50;
+                    Random rnd = new Random();
+                    int boxDoor = rnd.Next(1, 4);
+
+                    int zombie_x = boxDoor1.Location.X + boxDoor1.Width / 2 - zombie_dimension / 2;
+                    int zombie_y = boxDoor1.Location.Y + boxDoor1.Height / 2 - zombie_dimension / 2;
+
+                    foreach (Label door in panelMap.Controls)
+                    {
+                        if (door.Name == "boxDoor" + boxDoor.ToString())
+                        {
+                            zombie_x = door.Location.X + door.Width / 2 - zombie_dimension / 2;
+                            zombie_y = door.Location.Y + door.Height / 2 - zombie_dimension / 2;
+                            break;
+                        }
+                    }
+
+                    Label boxZombie = new Label();
+                    boxZombie.Name = "zombie";
+                    boxZombie.Size = new Size(zombie_dimension, zombie_dimension);
+                    boxZombie.AutoSize = false;
+                    boxZombie.Location = new Point(zombie_x, zombie_y);
+                    boxZombie.BackColor = Color.White;
+                    boxZombie.Text = "Z";
+                    boxZombie.TextAlign = ContentAlignment.MiddleCenter;
+                    boxZombie.BringToFront();
+                    panelMap.Controls.Add(boxZombie);
+
+                    Zombie zombie = new Zombie("zombie", zombie_x, zombie_y, boxZombie);
+                    list_zombies.Add(zombie);
+                }
+            }
+
+            /*
+             * Timer
+             */
             timerRefresh();
             clock++;
         }
